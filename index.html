@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Which British Historical Figure Are You?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+:root{--bg:#e9ecef;--card:#f8f9fa;--ink:#1c2433;--mute:#5b6577;--red:#9b1d2e;--line:#c5cbd4;--bar:#d5dae1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151f;--card:#192130;--ink:#e8ebf0;--mute:#9aa4b5;--red:#e0697a;--line:#2c3649;--bar:#2c3649}}
+:root[data-theme="dark"]{--bg:#10151f;--card:#192130;--ink:#e8ebf0;--mute:#9aa4b5;--red:#e0697a;--line:#2c3649;--bar:#2c3649}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.65 "Source Serif 4",Georgia,serif}
+main{max-width:640px;margin:0 auto;padding:32px 20px 56px}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.1;margin:0 0 12px}
+h1{font-size:clamp(2.4rem,9vw,3.6rem)}
+h2{font-size:clamp(1.8rem,6vw,2.4rem)}
+.card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--red);padding:24px;border-radius:4px}
+p{margin:0 0 14px}
+.mute{color:var(--mute);font-size:.9rem}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+.start,.again{background:var(--red);color:#fff;border:0;padding:12px 26px;border-radius:4px;font-weight:600;margin-top:8px}
+.start:focus-visible,.again:focus-visible,.opt:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.prog{height:6px;background:var(--bar);border-radius:3px;margin-bottom:22px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--red);transition:width .3s}
+.q{font-size:1.3rem;font-weight:600;margin-bottom:18px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);padding:14px 16px;margin-bottom:10px;border-radius:4px}
+.opt:hover{border-color:var(--red)}
+.fig{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:1.5rem;color:var(--red);margin:0 0 4px}
+.type{font-size:3rem;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1}
+.dim{display:grid;grid-template-columns:2.2rem 1fr 2.2rem;gap:10px;align-items:center;font-size:.85rem;margin:6px 0}
+.dim span:last-child{text-align:right}
+.track{height:8px;background:var(--bar);border-radius:4px;position:relative;overflow:hidden}
+.track i{position:absolute;top:0;bottom:0;background:var(--red)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<section id="intro">
+<h1>Which figure from British history are you?</h1>
+<p>Twenty quick questions, sixteen personality types, and sixteen famous Britons. Your answers place you on the Myers-Briggs scale, and we’ll match you to the person from history whose temperament is closest to yours, with the moments that show why.</p>
+<p class="mute">Just for fun: historians can’t give anyone a real personality test, so these pairings are educated guesses.</p>
+<button class="start" id="go">Begin</button>
+</section>
+<section id="quiz" class="hide" aria-live="polite">
+<div class="prog"><i id="bar"></i></div>
+<p class="mute" id="count"></p>
+<div class="q" id="qt"></div>
+<div id="opts"></div>
+</section>
+<section id="result" class="hide"></section>
+</main>
+<script>
+var Q=[
+["EI","A weekend with nothing planned. You…","Ring round and get people together","Enjoy the quiet and recharge alone","E","I"],
+["SN","When solving a problem you trust…","Facts, experience and what has worked before","Hunches and the bigger pattern","S","N"],
+["TF","A friend makes a poor decision. You first…","Point out the flaws in the logic","Consider how they must be feeling","T","F"],
+["JP","Before a trip you…","Book everything and write a plan","Pack the night before and see what happens","J","P"],
+["EI","At a party you tend to…","Work the room and meet new people","Stick with one or two good conversations","E","I"],
+["SN","You’d rather read…","A practical, detailed account of what happened","A bold theory about what it all means","S","N"],
+["TF","A good leader is mostly…","Fair and consistent, whoever it affects","Compassionate and attuned to people","T","F"],
+["JP","Your desk is…","Organised, with a place for everything","A creative pile you can navigate","J","P"],
+["EI","You think best when you…","Talk it through aloud with others","Mull it over in your head first","E","I"],
+["SN","You’re drawn to…","The tried and tested way","The untried possibility","S","N"],
+["TF","In an argument you’d rather be…","Right","At peace","T","F"],
+["JP","A deadline is…","A date to finish well ahead of","A prompt to start in earnest","J","P"],
+["EI","After a long week you want…","A night out with a crowd","A night in with a book","E","I"],
+["SN","You notice…","The details in front of you","What might happen next","S","N"],
+["TF","You’d rather be thought of as…","Competent and clear-headed","Warm and understanding","T","F"],
+["JP","Plans changing at the last minute make you…","Uneasy; you liked the plan","Curious; this could be fun","J","P"],
+["EI","Being the centre of attention feels…","Natural, even energising","Draining, best in small doses","E","I"],
+["SN","You trust a person more if they are…","Down to earth and dependable","Imaginative and visionary","S","N"],
+["TF","Hard choices should be made with…","The head, however painful","The heart, however illogical","T","F"],
+["JP","You make big decisions…","Quickly, then move on","Slowly, keeping options open","J","P"]];
+var T={
+INFJ:["Lady Jane Grey","The Nine Days’ Queen (1537–1554)","Jane was a scholar who read Plato in Greek and put conscience before ambition. She never wanted the crown that her family forced on her in 1553, and she accepted it only out of duty. Later she could have saved herself by converting to Catholicism and refused, because her faith mattered more to her than her safety. She was executed at sixteen. Like many INFJs, she let her values decide, even when logic said to bend."],
+INTJ:["Thomas Cromwell","Henry VIII’s fixer (c.1485–1540)","The blacksmith’s son rose to the top by sheer strategic brilliance. When Henry wanted to break with Rome, Cromwell designed the legal machinery to do it, from Acts of Parliament to the dissolution of the monasteries. He played the long game with cold clarity, but a calculated risk, the Anne of Cleves marriage, finally went wrong, and the INTJ’s plan outran the king’s patience."],
+INFP:["Diana, Princess of Wales","The People’s Princess (1961–1997)","Diana led with her heart and her values. In 1987 she shook hands with an AIDS patient without gloves at a time of widespread fear, challenging stigma with a simple human gesture. She later walked through a landmine field to highlight the cause of those harmed by them. INFPs act on what they believe is right, and she took her compassion into places protocol said she shouldn’t go."],
+INTP:["Alan Turing","Codebreaker and thinker (1912–1954)","Turing loved a good puzzle, and at Bletchley Park he built the machines that cracked Enigma, then laid the foundations of computer science by asking whether machines could think. He cared more about ideas than convention, which was brilliant in the lab and costly in 1950s Britain. INTPs follow the logic wherever it goes, even when the world isn’t ready."],
+ENFJ:["William Wilberforce","Abolitionist (1759–1833)","Wilberforce was charming, persuasive and warm, and used all of it to win people over. For twenty years he brought the slave trade before Parliament, losing vote after vote, and rallied allies, petitions and public opinion until the Slave Trade Act passed in 1807. ENFJs inspire others to share a moral vision, and he saw a cause through to its end."],
+ENTJ:["Margaret Thatcher","The Iron Lady (1925–2013)","Thatcher knew what she wanted and said so. She took on the unions during the 1984–85 miners’ strike and pushed through sweeping economic reforms, preferring conviction to consensus. Admirers saw decisive leadership and critics saw hard edges, but few doubted her will. ENTJs organise people and resources towards a goal and rarely back down."],
+ENTP:["Anne Boleyn","Queen consort (c.1501–1536)","Anne was quick-witted and a brilliant debater who thrived in the competitive world of court. She pushed Henry VIII, promoted reformist ideas and shaped events by argument and charisma. But ENTPs love challenging the rules, and the same sharp tongue and the enemies it made may have helped to bring her down."],
+ENFP:["Winston Churchill","Wartime Prime Minister (1874–1965)","Churchill was full of enthusiasm, ideas and words. In 1940, with Britain isolated, his speeches turned fear into resolve. He was also restless, changed party twice, and jumped from one grand idea to the next. ENFPs inspire with energy and imagination, and he led by it."],
+ESTJ:["Henry VII","First Tudor king (1457–1509)","After the chaos of the Wars of the Roses, Henry VII brought order. He filled the treasury through careful accounts and strict enforcement, and left the crown solvent and secure. ESTJs value structure and stability, and he built a dynasty from sound administration rather than glamour."],
+ESFJ:["Queen Victoria","Queen and Empress (1819–1901)","Victoria placed great weight on duty, family and propriety. After Prince Albert’s death in 1861 she mourned in black for decades, and her devotion to home life made the monarchy feel respectable and familiar. ESFJs hold communities together through care and tradition, and she gave her era its character."],
+ISTJ:["Duke of Wellington","Victor of Waterloo (1769–1852)","Wellington was disciplined, practical and meticulous. At Waterloo in 1815 he chose his ground carefully and held his line through a long day until the Prussians arrived. ISTJs rely on preparation and duty over flair, and he won by outlasting the enemy."],
+ISFJ:["Queen Elizabeth II","The longest-reigning monarch (1926–2022)","In 1947 she promised that her whole life would be devoted to service, and kept the vow for seventy years. She was reserved, steady and loyal to tradition, adapting quietly while never losing her sense of duty. ISFJs show care through dependable action, and she was the nation’s constant."],
+ISFP:["Mary Seacole","Nurse and pioneer (1805–1881)","When the War Office refused her as a nurse in the Crimean War, she paid her own way to the front and opened a ‘British Hotel’ near the fighting. There she treated soldiers on the battlefield, free of bureaucracy. ISFPs act on personal values and practical kindness, in their own way, and she ignored the barriers."],
+ISTP:["Isambard Kingdom Brunel","Engineer (1806–1859)","Brunel loved to build. He designed the Great Western Railway, the Clifton Suspension Bridge and the SS Great Britain, solving problems with hands-on ingenuity and a calm head for risk. ISTPs understand how things work and love making them, and he reshaped Britain’s landscape doing it."],
+ESTP:["Admiral Lord Nelson","Hero of Trafalgar (1758–1805)","Nelson thrived on action. At Copenhagen in 1801 he famously raised his telescope to his blind eye to ignore a signal to retreat, and at Trafalgar in 1805 he broke the line with a daring plan. ESTPs trust their instincts in the moment, and his boldness won battles."],
+ESFP:["Charles II","The Merry Monarch (1630–1685)","After years of Puritan rule, Charles brought back theatres, music, horse racing and parties. He was sociable, witty and charming, and made the court a place of pleasure. ESFPs live in the moment and bring joy to others, and he made the nation exhale."]
+};
+var i=0,sc={};
+function $(x){return document.getElementById(x)}
+function show(id){["intro","quiz","result"].forEach(function(s){$(s).classList.toggle("hide",s!==id)})}
+function ask(){
+ var q=Q[i];$("qt").textContent=q[1];
+ $("count").textContent="Question "+(i+1)+" of "+Q.length;
+ $("bar").style.width=(i/Q.length*100)+"%";
+ var o=$("opts");o.innerHTML="";
+ [[q[2],q[4]],[q[3],q[5]]].forEach(function(a){
+  var b=document.createElement("button");b.className="opt";b.textContent=a[0];
+  b.onclick=function(){sc[a[1]]=(sc[a[1]]||0)+1;i++;i<Q.length?ask():fin()};
+  o.appendChild(b)});
+ o.firstChild.focus({preventScroll:true});
+}
+function pair(a,b){var x=sc[a]||0,y=sc[b]||0,n=x+y;return[x>y?a:b,Math.round(Math.max(x,y)/n*100),a,x/n*100]}
+function fin(){
+ var d=[pair("E","I"),pair("S","N"),pair("T","F"),pair("J","P")];
+ var code=d.map(function(p){return p[0]}).join(""),t=T[code];
+ var names={E:"Extravert",I:"Introvert",S:"Sensing",N:"Intuition",T:"Thinking",F:"Feeling",J:"Judging",P:"Perceiving"};
+ var bars=d.map(function(p){var o=p[2];var other={E:"I",S:"N",T:"F",J:"P"}[o];
+  var pct=p[3];return '<div class="dim"><span>'+o+'</span><div class="track" title="'+names[p[0]]+' '+p[1]+'%"><i style="left:0;width:'+pct+'%"></i></div><span>'+other+'</span></div>'}).join("");
+ $("result").innerHTML='<div class="card"><p class="mute">You’re '+(/^[AEIOU]/.test(code)?"an ":"a ")+code+', just like</p><div class="type">'+t[0]+'</div><p class="fig">'+t[1]+'</p><p>'+t[2]+'</p></div>'+
+  '<div style="margin:24px 0">'+bars+'<p class="mute">The bar shows how far you lean to each side of each pair.</p></div><button class="again" id="re">Take it again</button>';
+ $("re").onclick=function(){i=0;sc={};show("quiz");ask();window.scrollTo(0,0)};
+ show("result");window.scrollTo(0,0);
+}
+$("go").onclick=function(){show("quiz");ask()};
+</script>
+</body>
+</html>
